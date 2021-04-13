@@ -4,7 +4,15 @@ self.elementNotifier = (function (exports) {
   var TRUE = true,
       FALSE = false;
   var QSA = 'querySelectorAll';
-  var notify = function notify(callback) {
+  /**
+   * Start observing a generic document or root element.
+   * @param {Function} callback triggered per each dis/connected node
+   * @param {Element?} root by default, the global document to observe
+   * @param {Function?} MO by default, the global MutationObserver
+   * @returns {MutationObserver}
+   */
+
+  var notify = function notify(callback, root, MO) {
     var loop = function loop(nodes, added, removed, connected, pass) {
       for (var i = 0, length = nodes.length; i < length; i++) {
         var node = nodes[i];
@@ -27,7 +35,7 @@ self.elementNotifier = (function (exports) {
       }
     };
 
-    var observer = new MutationObserver(function (records) {
+    var observer = new (MO || MutationObserver)(function (records) {
       for (var added = new Set(), removed = new Set(), i = 0, length = records.length; i < length; i++) {
         var _records$i = records[i],
             addedNodes = _records$i.addedNodes,
@@ -36,7 +44,7 @@ self.elementNotifier = (function (exports) {
         loop(addedNodes, added, removed, TRUE, FALSE);
       }
     });
-    observer.observe(document, {
+    observer.observe(root || document, {
       subtree: TRUE,
       childList: TRUE
     });

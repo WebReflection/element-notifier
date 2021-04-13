@@ -1,7 +1,14 @@
 const TRUE = true, FALSE = false;
 const QSA = 'querySelectorAll';
 
-export const notify = callback => {
+/**
+ * Start observing a generic document or root element.
+ * @param {Function} callback triggered per each dis/connected node
+ * @param {Element?} root by default, the global document to observe
+ * @param {Function?} MO by default, the global MutationObserver
+ * @returns {MutationObserver}
+ */
+export const notify = (callback, root, MO) => {
   const loop = (nodes, added, removed, connected, pass) => {
     for (let i = 0, {length} = nodes; i < length; i++) {
       const node = nodes[i];
@@ -24,7 +31,7 @@ export const notify = callback => {
     }
   };
 
-  const observer = new MutationObserver(records => {
+  const observer = new (MO || MutationObserver)(records => {
     for (let
       added = new Set,
       removed = new Set,
@@ -37,7 +44,7 @@ export const notify = callback => {
     }
   });
 
-  observer.observe(document, {subtree: TRUE, childList: TRUE});
+  observer.observe(root || document, {subtree: TRUE, childList: TRUE});
 
   return observer;
 };
