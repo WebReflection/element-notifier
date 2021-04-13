@@ -20,10 +20,11 @@ const notify = callback => {
           callback(node, connected);
         }
         if (!pass)
-          loop(node[QSA]('*'), added, removed, connected, TRUE);
+          loop((node.shadowRoot || node)[QSA]('*'), added, removed, connected, TRUE);
       }
     }
   };
+
   const observer = new MutationObserver(records => {
     for (let
       added = new Set,
@@ -36,7 +37,9 @@ const notify = callback => {
       loop(addedNodes, added, removed, TRUE, FALSE);
     }
   });
+
   observer.observe(document, {subtree: TRUE, childList: TRUE});
+
   return observer;
 };
 exports.notify = notify;

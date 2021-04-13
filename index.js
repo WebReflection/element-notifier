@@ -22,7 +22,7 @@ self.elementNotifier = (function (exports) {
             callback(node, connected);
           }
 
-          if (!pass) loop(node[QSA]('*'), added, removed, connected, TRUE);
+          if (!pass) loop((node.shadowRoot || node)[QSA]('*'), added, removed, connected, TRUE);
         }
       }
     };
