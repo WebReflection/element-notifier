@@ -1,6 +1,10 @@
 const TRUE = true, FALSE = false;
 const QSA = 'querySelectorAll';
 
+function add(node) {
+  this.observe(node, {subtree: TRUE, childList: TRUE});
+}
+
 /**
  * Start observing a generic document or root element.
  * @param {Function} callback triggered per each dis/connected node
@@ -26,7 +30,7 @@ export const notify = (callback, root, MO) => {
           callback(node, connected);
         }
         if (!pass)
-          loop((node.shadowRoot || node)[QSA]('*'), added, removed, connected, TRUE);
+          loop(node[QSA]('*'), added, removed, connected, TRUE);
       }
     }
   };
@@ -44,7 +48,8 @@ export const notify = (callback, root, MO) => {
     }
   });
 
-  observer.observe(root || document, {subtree: TRUE, childList: TRUE});
+  observer.add = add;
+  observer.add(root || document);
 
   return observer;
 };
