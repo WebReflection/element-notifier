@@ -10,8 +10,9 @@
     '../esm/index.js' :
     'https://unpkg.com/element-notifier?module'
   )
-  .then((module) => {
-    console.log(module);
+  .then(({notify}) => {
+    console.log('Ready');
+    window.notify = notify;
   });
   </script>
 </head>
