@@ -41,11 +41,16 @@ While the observer could crawl nodes within a `shadowRoot`, in case it's opened,
 If observing nodes appended or removed from any `shadowRoot` is desired, or at least any *open* one, it is necessary to somehow pollute the `Element.prototype` in a similar way:
 
 ```js
+import {notify} from 'element-notifier';
+
+// augmented method with right options included
+const {observe} = notify(/* ... */);
+
 const {attachShadow} = Element.prototype;
 Element.prototype.attachShadow = function (init) {
   const shadowRoot = attachShadow.call(this, init);
   if (init.mode === 'open')
-    observer.add(shadowRoot);
+    observe(shadowRoot);
   return shadowRoot;
 };
 ```

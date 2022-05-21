@@ -1,0 +1,2 @@
+/*! (c) Andrea Giammarchi - ISC */
+const e="querySelectorAll",t=(t,o=document,r=MutationObserver)=>{const s=(o,r,d,n,l)=>{for(const a of o)(l||e in a)&&(n?r.has(a)||(r.add(a),d.delete(a),t(a,n)):d.has(a)||(d.add(a),r.delete(a),t(a,n)),l||s(a[e]("*"),r,d,n,true))},d=new r((e=>{const t=new Set,o=new Set;for(const{addedNodes:r,removedNodes:d}of e)s(d,t,o,false,false),s(r,t,o,true,false)})),{observe:n}=d;return(d.observe=e=>n.call(d,e,{subtree:true,childList:true}))(o),d};export{t as notify};

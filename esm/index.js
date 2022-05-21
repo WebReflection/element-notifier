@@ -1,21 +1,16 @@
-const TRUE = true, FALSE = false;
-const QSA = 'querySelectorAll';
-
-function add(node) {
-  this.observe(node, {subtree: TRUE, childList: TRUE});
-}
+/*! (c) Andrea Giammarchi - ISC */
+const TRUE = true, FALSE = false, QSA = 'querySelectorAll';
 
 /**
  * Start observing a generic document or root element.
- * @param {Function} callback triggered per each dis/connected node
- * @param {Element?} root by default, the global document to observe
- * @param {Function?} MO by default, the global MutationObserver
+ * @param {(node:Element, connected:boolean) => void} callback triggered per each dis/connected element
+ * @param {Document|Element} [root=document] by default, the global document to observe
+ * @param {Function} [MO=MutationObserver] by default, the global MutationObserver
  * @returns {MutationObserver}
  */
-export const notify = (callback, root, MO) => {
+export const notify = (callback, root = document, MO = MutationObserver) => {
   const loop = (nodes, added, removed, connected, pass) => {
-    for (let i = 0, {length} = nodes; i < length; i++) {
-      const node = nodes[i];
+    for (const node of nodes) {
       if (pass || (QSA in node)) {
         if (connected) {
           if (!added.has(node)) {
@@ -35,21 +30,16 @@ export const notify = (callback, root, MO) => {
     }
   };
 
-  const observer = new (MO || MutationObserver)(records => {
-    for (let
-      added = new Set,
-      removed = new Set,
-      i = 0, {length} = records;
-      i < length; i++
-    ) {
-      const {addedNodes, removedNodes} = records[i];
+  const mo = new MO(records => {
+    const added = new Set, removed = new Set;
+    for (const {addedNodes, removedNodes} of records) {
       loop(removedNodes, added, removed, FALSE, FALSE);
       loop(addedNodes, added, removed, TRUE, FALSE);
     }
   });
 
-  observer.add = add;
-  observer.add(root || document);
+  const {observe} = mo;
+  (mo.observe = node => observe.call(mo, node, {subtree: TRUE, childList: TRUE}))(root);
 
-  return observer;
+  return mo;
 };
