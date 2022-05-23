@@ -1,6 +1,6 @@
 {
   "name": "element-notifier",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A MutationObserver dis/connected helper",
   "main": "./cjs/index.js",
   "scripts": {
