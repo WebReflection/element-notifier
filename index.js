@@ -9,10 +9,12 @@ self.elementNotifier = (function (exports) {
    * @param {(node:Element, connected:boolean) => void} callback triggered per each dis/connected element
    * @param {Document|Element} [root=document] by default, the global document to observe
    * @param {Function} [MO=MutationObserver] by default, the global MutationObserver
+   * @param {string[]} [query=['*']] the selectors to use within nodes
    * @returns {MutationObserver}
    */
-  const notify = (callback, root = document, MO = MutationObserver) => {
+  const notify = (callback, root = document, MO = MutationObserver, query = ['*']) => {
     const loop = (nodes, added, removed, connected, pass) => {
+      const selectors = query.join(',');
       for (const node of nodes) {
         if (pass || (QSA in node)) {
           if (connected) {
@@ -28,7 +30,7 @@ self.elementNotifier = (function (exports) {
             callback(node, connected);
           }
           if (!pass)
-            loop(node[QSA]('*'), added, removed, connected, TRUE);
+            loop(node[QSA](selectors), added, removed, connected, TRUE);
         }
       }
     };
