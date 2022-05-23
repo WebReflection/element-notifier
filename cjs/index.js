@@ -11,8 +11,7 @@ const TRUE = true, FALSE = false, QSA = 'querySelectorAll';
  * @returns {MutationObserver}
  */
 const notify = (callback, root = document, MO = MutationObserver, query = ['*']) => {
-  const loop = (nodes, added, removed, connected, pass) => {
-    const selectors = query.join(',');
+  const loop = (nodes, selectors, added, removed, connected, pass) => {
     for (const node of nodes) {
       if (pass || (QSA in node)) {
         if (connected) {
@@ -28,16 +27,19 @@ const notify = (callback, root = document, MO = MutationObserver, query = ['*'])
           callback(node, connected);
         }
         if (!pass)
-          loop(node[QSA](selectors), added, removed, connected, TRUE);
+          loop(node[QSA](selectors), selectors, added, removed, connected, TRUE);
       }
     }
   };
 
   const mo = new MO(records => {
-    const added = new Set, removed = new Set;
-    for (const {addedNodes, removedNodes} of records) {
-      loop(removedNodes, added, removed, FALSE, FALSE);
-      loop(addedNodes, added, removed, TRUE, FALSE);
+    if (query.length) {
+      const selectors = query.join(',');
+      const added = new Set, removed = new Set;
+      for (const {addedNodes, removedNodes} of records) {
+        loop(removedNodes, selectors, added, removed, FALSE, FALSE);
+        loop(addedNodes, selectors, added, removed, TRUE, FALSE);
+      }
     }
   });
 
