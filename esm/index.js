@@ -35,15 +35,15 @@ export const notify = (callback, root = document, MO = MutationObserver, query =
     if (query.length) {
       const selectors = query.join(',');
       const added = new Set, removed = new Set;
-      for (const {addedNodes, removedNodes} of records) {
+      for (const { addedNodes, removedNodes } of records) {
         loop(removedNodes, selectors, added, removed, FALSE, FALSE);
         loop(addedNodes, selectors, added, removed, TRUE, FALSE);
       }
     }
   });
 
-  const {observe} = mo;
-  (mo.observe = node => observe.call(mo, node, {subtree: TRUE, childList: TRUE}))(root);
+  const observe = mo.observe;
+  (mo.observe = node => observe.call(mo, node, { subtree: TRUE, childList: TRUE }))(root);
 
   return mo;
 };
