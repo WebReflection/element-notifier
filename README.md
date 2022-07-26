@@ -20,7 +20,7 @@ const observer = notify(
 );
 ```
 
-The `observer` is a regular *MutationObserver* instance with an extra `.add(node)` method to observe mutations within fragments too (example: *shadowRoot* nodes).
+The `observer` is a regular *MutationObserver* instance with a self bound, and instrumented, `.observe(node)` method to observe mutations within fragments too (example: *shadowRoot* nodes).
 
 
 ### Why?
@@ -40,7 +40,7 @@ While the observer could crawl nodes within a `shadowRoot`, in case it's opened,
 
 If observing nodes appended or removed from any `shadowRoot` is desired, or at least any *open* one, it is necessary to somehow pollute the `Element.prototype` in a similar way:
 
-```js
+```javascript
 import {notify} from 'element-notifier';
 
 // augmented method with right options included
