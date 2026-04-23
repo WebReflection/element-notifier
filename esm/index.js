@@ -1,4 +1,3 @@
-/*! (c) Andrea Giammarchi - ISC */
 const TRUE = true, FALSE = false, QSA = 'querySelectorAll';
 
 /**
