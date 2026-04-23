@@ -3,7 +3,7 @@
 A MutationObserver dis/connected helper.
 
 ```js
-import {notify} from 'element-notifier';
+import { notify } from 'element-notifier';
 
 const observer = notify(
   // callback that receives any connected/disconnected element
@@ -41,18 +41,24 @@ While the observer could crawl nodes within a `shadowRoot`, in case it's opened,
 If observing nodes appended or removed from any `shadowRoot` is desired, or at least any *open* one, it is necessary to somehow pollute the `Element.prototype` in a similar way:
 
 ```javascript
-import {notify} from 'element-notifier';
+import { notify } from 'element-notifier';
 
 // augmented method with right options included
-const {observe} = notify(/* ... */);
+const { observe } = notify(/* ... */);
 
-const {attachShadow} = Element.prototype;
-Element.prototype.attachShadow = function (init) {
-  const shadowRoot = attachShadow.call(this, init);
-  if (init.mode === 'open')
-    observe(shadowRoot);
-  return shadowRoot;
-};
+const { attachShadow } = Element.prototype;
+Object.defineProperty(
+  Element.prototype,
+  'attachShadow',
+  {
+    value(init) {
+      const shadowRoot = attachShadow.call(this, init);
+      if (init.mode === 'open')
+        observe(shadowRoot);
+      return shadowRoot;
+    }
+  },
+);
 ```
 
 It is not responsibility of this module to augment the environment so it's up to this module consumers decide if doing so is needed or desired.
