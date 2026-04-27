@@ -42,7 +42,7 @@ export const notify = (callback, root = document, MO = MutationObserver, query =
   });
 
   const observe = mo.observe;
-  (mo.observe = node => observe.call(mo, node, { subtree: TRUE, childList: TRUE }))(root);
+  (mo.observe = node => observe.call(mo, node, { subtree: TRUE, childList: TRUE, shadow: 3 }))(root);
 
   return mo;
 };
