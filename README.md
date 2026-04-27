@@ -38,29 +38,16 @@ This helper does just this: it passes to the callback every element that has bee
 
 While the observer could crawl nodes within a `shadowRoot`, in case it's opened, if nodes are removed from it nothing is notified due *MutationObserver* limitations.
 
-If observing nodes appended or removed from any `shadowRoot` is desired, or at least any *open* one, it is necessary to somehow pollute the `Element.prototype` in a similar way:
+If observing nodes appended or removed from any `shadowRoot` is desired, use [shadow-observer](https://github.com/WebReflection/shadow-observer#readme):
 
 ```javascript
+import { ShadowObserver, OPEN, CLOSED } from 'shadow-observer';
 import { notify } from 'element-notifier';
 
 // augmented method with right options included
-const { observe } = notify(/* ... */);
-
-const { attachShadow } = Element.prototype;
-Object.defineProperty(
-  Element.prototype,
-  'attachShadow',
-  {
-    value(init) {
-      const shadowRoot = attachShadow.call(this, init);
-      if (init.mode === 'open')
-        observe(shadowRoot);
-      return shadowRoot;
-    }
-  },
+const { observe } = notify(
+  (node, connected) => { ... },
+  document,
+  ShadowObserver,
 );
 ```
-
-It is not responsibility of this module to augment the environment so it's up to this module consumers decide if doing so is needed or desired.
-
-Please note that `connected` might mislead in case the *shadowRoot* is not live yet, as the *MutationObserver* in fragments doesn't care about their owner state.
